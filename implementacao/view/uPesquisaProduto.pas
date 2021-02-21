@@ -14,6 +14,7 @@ type
     btnPesquisaProduto: TButton;
     btnSelecionar: TButton;
     tmrConsulta: TTimer;
+    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure btnPesquisaProdutoClick(Sender: TObject);
@@ -37,9 +38,8 @@ implementation
 
 procedure TFPesquisaProduto.btnPesquisaProdutoClick(Sender: TObject);
 begin
-  ProdutoCtr.CarregarProduto(txtcodProduto.Text);
-
-  cGrid.Clear;
+    ProdutoCtr.CarregarProduto(txtcodProduto.Text);
+    cGrid.Clear;
   cGrid.RootNodeCount := ProdutoCtr.ProdutoList.Count;
 end;
 

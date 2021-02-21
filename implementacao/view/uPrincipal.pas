@@ -8,7 +8,7 @@ uses
   Data.DB,  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
   FireDAC.DApt, FireDAC.Phys.PG, FireDAC.VCLUI.Wait, FireDAC.Comp.UI,
-  VirtualTrees, uFuncoes, Vcl.ExtCtrls, uVendas;
+  VirtualTrees, uFuncoes, Vcl.ExtCtrls, uVendas, Urelatorio;
 
 type
   TFPrincipal = class(TForm)
@@ -16,12 +16,13 @@ type
     Panel2: TPanel;
     btnTelaCadastro: TButton;
     btnVenda: TButton;
-    btnRelatorio: TButton;
     btnSair: TButton;
+    btRelatorio: TButton;
     procedure btnTelaCadastroClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnSairClick(Sender: TObject);
     procedure btnVendaClick(Sender: TObject);
+    procedure btRelatorioClick(Sender: TObject);
   private
     conectar : Tconexao;
     DtSource : TDataSource;
@@ -40,9 +41,10 @@ uses
 
 {$R *.dfm}
 
+
 procedure TFPrincipal.btnSairClick(Sender: TObject);
 begin
-  Self.Close;
+  Close;
 end;
 
 procedure TFPrincipal.btnTelaCadastroClick(Sender: TObject);
@@ -64,6 +66,17 @@ begin
     telaVenda.ShowModal;
   finally
     telaVenda.Free;
+  end;
+end;
+
+procedure TFPrincipal.btRelatorioClick(Sender: TObject);
+var Form_rel: TForm_rel;
+begin
+  try
+   Form_rel := TForm_rel.Create(nil);
+   Form_rel.ShowModal;
+  finally
+   Form_rel.Free;
   end;
 end;
 

@@ -13,7 +13,8 @@ uses
   uVendasModel in 'model\uVendasModel.pas',
   uVendasDao in 'dao\uVendasDao.pas',
   uVendasController in 'controller\uVendasController.pas',
-  uPesquisaProduto in 'view\uPesquisaProduto.pas' {FPesquisaProduto};
+  uPesquisaProduto in 'view\uPesquisaProduto.pas' {FPesquisaProduto},
+  Urelatorio in 'view\Urelatorio.pas' {Form_rel};
 
 {$R *.res}
 

@@ -217,7 +217,7 @@ begin
      CtrProduto.Produto.valor        := StrToCurr(txtValor.Text);
      CtrProduto.Produto.Departamento := CmbDepartamento.Text;
      CtrProduto.Produto.Estoque      := StrToInt(txtEstoque.Text);
-
+     
      if CtrProduto.Inserir(sErro) then
      begin
        ShowMessage('Inserido com sucesso!');

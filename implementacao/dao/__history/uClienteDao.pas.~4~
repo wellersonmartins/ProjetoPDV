@@ -1,0 +1,191 @@
+unit uClienteDao;
+
+interface
+uses
+   uconexao, Data.DB, FireDAC.Comp.Client, uClienteModel, uFuncoes;
+
+type
+  TProdutoDao = class
+    public
+      function GerarId: Integer;
+      procedure CarregarCliente(ClienteList: TClienteList; Pesquisa: string);
+      function Inserir(oCliente: TCliente; out sErro: String):Boolean;
+      function Alterar(oCliente: TCliente; out sErro: String):Boolean;
+      function Excluir(oCliente: TCliente; out sErro: String):Boolean;
+  end;
+
+implementation
+
+uses
+  System.SysUtils;
+
+{ TClienteDao }
+
+function TClienteDao.Alterar(oCliente: TCliente;out sErro: String): Boolean;
+var Con : iniciaConexao;
+begin
+   Con := iniciaConexao.Create;
+   try
+      Con.conexao;
+
+      Con.Query.SQL.Clear;
+      Con.Query.SQL.Add('update cadastroCliente set             ');
+      Con.Query.SQL.Add('  codcliente        =:cli_codigo       ');
+      Con.Query.SQL.Add(' ,nome              =:cli_descricao    ');
+      Con.Query.SQL.Add('  where codcliente  =:cli_codigo       ');
+
+      Con.Query.ParamByName('cli_codigo').AsInteger      := oCliente.ID;
+      Con.Query.ParamByName('cli_descricao').AsString    := oCliente.Descricao;
+
+      try
+        Con.Query.SQL.SaveToFile('C:\Temp\teste.txt');
+        Con.Query.ExecSQL;
+        Result := True;
+      except on E: Exception do
+        begin
+          sErro:= 'Erro ao alterar Cliente: ' + #13 + E.Message;
+          Result := False;
+        end;
+      end;
+   finally
+     con.Destroy;
+   end;
+end;
+
+procedure TClienteDao.CarregarCliente(ClienteList: TClienteList; Pesquisa: string);
+var Con : iniciaConexao;
+var i: Integer;
+var P: TCliente;
+
+begin
+   Con := iniciaConexao.Create;
+   try
+     Con.conexao;
+
+     Con.Query.SQL.Clear;
+     Con.Query.SQL.Add('select * from cadastroCliente ');
+
+     if StrToIntDef(Pesquisa, 0) = 0 then
+     begin
+       COn.Query.SQL.Add('where lower(pro_descricao) like lower(:pro_descricao)') ;
+       COn.Query.ParamByName('pro_descricao').AsString := Pesquisa + '%';
+     end
+     else
+     begin
+       COn.Query.SQL.Add('where pro_codigo = :pro_codigo') ;
+       COn.Query.ParamByName('pro_codigo').AsInteger := StrToInt(Pesquisa);
+     end;
+     Con.Query.SQL.SaveToFile('C:\Temp\teste.txt');
+     Con.Query.Open;
+
+     ClienteList.Clear;
+
+     for I := 0 to Con.Query.RecordCount - 1 do
+     begin
+        P:= TCliente.Create;
+
+        P.ID          := Con.Query.FieldByName('pro_codigo').AsInteger;
+        P.Descricao   := Con.Query.FieldByName('pro_descricao').AsString;
+        P.Unidade     := Con.Query.FieldByName('pro_unidade').AsString;
+        P.Valor       := Con.Query.FieldByName('pro_valor').AsCurrency;
+        P.Departamento:= Con.Query.FieldByName('pro_departamento').AsString;
+        P.Estoque     := Con.Query.FieldByName('pro_estoque').AsInteger;
+
+        ClienteList.Add(P);
+        Con.Query.Next;
+     end;
+   finally
+     con.Destroy;
+   end;
+end;
+
+function TClienteDao.Excluir(oCliente: TCliente;out sErro: String): Boolean;
+var Con : iniciaConexao;
+begin
+   Con := iniciaConexao.Create;
+   try
+      Con.conexao;
+
+      Con.Query.SQL.Clear;
+      Con.Query.SQL.Add('Delete from cadastroCliente     ');
+      Con.Query.SQL.Add('  where pro_codigo =:pro_codigo ');
+
+      Con.Query.ParamByName('pro_codigo').AsInteger := oCliente.ID;
+
+      try
+        Con.Query.SQL.SaveToFile('C:\Temp\teste.txt');
+        Con.Query.ExecSQL;
+        Result := True;
+      except on E: Exception do
+        begin
+          sErro:= 'Erro ao excluir Cliente: ' + #13 + E.Message;
+          Result := False;
+        end;
+      end;
+   finally
+     con.Destroy;
+   end;
+end;
+
+function TClienteDao.GerarId: Integer;
+var Con : iniciaConexao;
+begin
+   Con := iniciaConexao.Create;
+   try
+      Con.conexao;
+
+      Con.Query.SQL.Clear;
+      Con.Query.SQL.Add('select max(pro_codigo) + 1 as seq from cadastroCliente');
+      Con.Query.Open;
+      Result := Con.Query.FieldByName('seq').AsInteger;
+   finally
+     con.Destroy;
+   end;
+end;
+
+function TClienteDao.Inserir(oCliente: TCliente; out sErro: String): Boolean;
+var Con : iniciaConexao;
+begin
+   Con := iniciaConexao.Create;
+   try
+      Con.conexao;
+
+      Con.Query.SQL.Clear;
+      Con.Query.SQL.Add('Insert into cadastroCliente');
+      Con.Query.SQL.Add('     ( pro_codigo         ');
+      Con.Query.SQL.Add('      ,pro_descricao      ');
+      Con.Query.SQL.Add('      ,pro_valor          ');
+      Con.Query.SQL.Add('      ,pro_estoque        ');
+      Con.Query.SQL.Add('      ,pro_departamento   ');
+      Con.Query.SQL.Add('      ,pro_unidade        ');
+      Con.Query.SQL.Add('        )values(          ');
+      Con.Query.SQL.Add('      :pro_codigo        ');
+      Con.Query.SQL.Add('     ,:pro_descricao     ');
+      Con.Query.SQL.Add('     ,:pro_valor         ');
+      Con.Query.SQL.Add('     ,:pro_estoque       ');
+      Con.Query.SQL.Add('     ,:pro_departamento  ');
+      Con.Query.SQL.Add('     ,:pro_unidade   )   ');
+
+      Con.Query.ParamByName('pro_codigo').AsInteger      := oCliente.ID;
+      Con.Query.ParamByName('pro_descricao').AsString    := oCliente.Descricao;
+      Con.Query.ParamByName('pro_valor').AsFloat         := oCliente.valor;
+      Con.Query.ParamByName('pro_estoque').AsInteger     := oCliente.Estoque;
+      Con.Query.ParamByName('pro_departamento').AsString := oCliente.Departamento;
+      Con.Query.ParamByName('pro_unidade').AsString      := oCliente.Unidade;
+
+      try
+        Con.Query.SQL.SaveToFile('C:\Temp\teste.txt');
+        Con.Query.ExecSQL;
+        Result := True;
+      except on E: Exception do
+        begin
+          sErro:= 'Erro ao inserir Cliente: ' + #13 + E.Message;
+          Result := False;
+        end;
+      end;
+   finally
+     con.Destroy;
+   end;
+end;
+
+end.

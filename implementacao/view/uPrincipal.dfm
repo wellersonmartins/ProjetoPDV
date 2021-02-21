@@ -34,7 +34,7 @@ object FPrincipal: TFPrincipal
       Width = 75
       Height = 62
       Align = alLeft
-      Caption = 'Cadastrar'
+      Caption = 'Produto'
       TabOrder = 0
       OnClick = btnTelaCadastroClick
     end
@@ -55,17 +55,6 @@ object FPrincipal: TFPrincipal
       TabOrder = 1
       OnClick = btnVendaClick
     end
-    object btnRelatorio: TButton
-      AlignWithMargins = True
-      Left = 166
-      Top = 4
-      Width = 75
-      Height = 62
-      Align = alLeft
-      Caption = 'Relat'#243'rio'
-      TabOrder = 2
-      OnClick = btnTelaCadastroClick
-    end
     object btnSair: TButton
       AlignWithMargins = True
       Left = 636
@@ -74,8 +63,25 @@ object FPrincipal: TFPrincipal
       Height = 62
       Align = alRight
       Caption = 'Sair'
-      TabOrder = 3
+      TabOrder = 2
       OnClick = btnSairClick
+    end
+    object btRelatorio: TButton
+      AlignWithMargins = True
+      Left = 166
+      Top = 4
+      Width = 75
+      Height = 62
+      Align = alLeft
+      Caption = 'Relat'#243'rio'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 3
+      OnClick = btRelatorioClick
     end
   end
   object Panel2: TPanel

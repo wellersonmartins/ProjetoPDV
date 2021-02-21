@@ -13,8 +13,9 @@ type
       function NewPed: Integer;
       function VerificaPedido: Boolean;
       function Inserir(oVendas: TVendasModel; out sErro: String):Boolean;
+      function Remover(oVendas: TVendasModel; out sErro: String):Boolean;
       function FinalizaPedido(oVendas: TVendaList; out sErro: String):Boolean;
-      procedure CarregaPedido(VendaList: TVendaList; Pedido: Integer);
+      procedure CarregaPedido(VendaList: TVendaList; Pedido: Integer; Finalizado: Boolean; dt1,dt2: TDateTime);
   end;
 
 var
@@ -24,7 +25,7 @@ implementation
 
 { TvendasDao }
 
-procedure TvendasDao.CarregaPedido(VendaList: TVendaList; Pedido: Integer);
+procedure TvendasDao.CarregaPedido(VendaList: TVendaList; Pedido: Integer; Finalizado: Boolean; dt1,dt2: TDateTime);
 var Con: iniciaConexao;
   I: Integer;
 var V: TvendasModel;
@@ -42,7 +43,15 @@ begin
     Con.Query.SQL.Add('  ,car_valortotal             ');
     Con.Query.SQL.Add('from carrinhoProduto          ');
     Con.Query.SQL.Add('inner join cadastroProduto on pro_codigo = car_codproduto ');
-    Con.Query.SQL.Add('where car_finalizado = False  ');
+    if Finalizado then
+    begin
+      Con.Query.SQL.Add('where car_finalizado = True  ');
+      Con.Query.SQL.Add('and   car_dateini between :dt1 and :dt2  ');
+      COn.Query.ParamByName('dt1').AsDate := dt1;
+      COn.Query.ParamByName('dt2').AsDate := dt2;
+    end
+    else
+      Con.Query.SQL.Add('where car_finalizado = False  ');
     if Pedido > 0 then
     begin
       Con.Query.SQL.Add('and car_codigo = :car_codigo');
@@ -136,6 +145,7 @@ begin
         Con.Query.SQL.Add('     ,car_quantidade       ');
         Con.Query.SQL.Add('     ,car_valorUnitario    ');
         Con.Query.SQL.Add('     ,car_valorTotal       ');
+        Con.Query.SQL.Add('     ,car_dateini          ');
         Con.Query.SQL.Add('     ,car_finalizado 	    ');
         Con.Query.SQL.Add('       )values(            ');
         Con.Query.SQL.Add('      :car_codigo          ');
@@ -143,6 +153,7 @@ begin
         Con.Query.SQL.Add('     ,:car_quantidade      ');
         Con.Query.SQL.Add('     ,:car_valorUnitario   ');
         Con.Query.SQL.Add('     ,:car_valorTotal      ');
+        Con.Query.SQL.Add('     ,:car_dateini         ');
         Con.Query.SQL.Add('     ,:car_finalizado )    ');
       end;
 
@@ -151,6 +162,7 @@ begin
       Con.Query.ParamByName('car_quantidade').AsInteger    := oVendas.car_quantidade;
       Con.Query.ParamByName('car_valorUnitario').AsFloat   := oVendas.car_valorUnitario;
       Con.Query.ParamByName('car_valorTotal').AsFloat      := oVendas.car_valorTotal;
+      Con.Query.ParamByName('car_dateini').AsDate          := Date;
       Con.Query.ParamByName('car_finalizado').AsBoolean    := oVendas.car_finalizado;
 
       try
@@ -184,5 +196,35 @@ begin
    end;
 end;
 
+
+function TvendasDao.Remover(oVendas: TVendasModel; out sErro: String): Boolean;
+var Con : iniciaConexao;
+begin
+   Con := iniciaConexao.Create;
+   try
+      Con.conexao;
+      Con.Query.SQL.Clear;
+      begin
+        Con.Query.SQL.Add('delete from carrinhoProduto ');
+        Con.Query.SQL.Add('where car_codigo = :car_codigo ');
+
+      end;
+
+      Con.Query.ParamByName('car_codigo').AsInteger        := oVendas.car_codigo;
+      try
+        Con.Query.SQL.SaveToFile('C:\Temp\teste.txt');
+        Con.Query.ExecSQL;
+        Result := True;
+      except on E: Exception do
+        begin
+          sErro:= 'Erro ao excluir a venda: ' + #13 + E.Message;
+          Result := False;
+        end;
+      end;
+   finally
+     con.Destroy;
+   end
+
+end;
 
 end.

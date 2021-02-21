@@ -41,6 +41,7 @@ type
     procedure btnFinalizarClick(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure btnExluirClick(Sender: TObject);
   private
     function valorTotal: Currency;
   public
@@ -66,7 +67,26 @@ implementation
 
 procedure TFVenda.btnCancelarClick(Sender: TObject);
 begin
-  Self.DoExit;
+  Self.Close;
+end;
+
+procedure TFVenda.btnExluirClick(Sender: TObject);
+var Node: PVirtualNode;
+sErro: string;
+begin
+   Node := cGrid.GetFirstSelected;
+   if Assigned(Node) then
+   begin
+     CtrVendas.Vendas := CtrVendas.VendasList[Node.Index];
+     if CtrVendas.Remover(sErro) then
+     begin
+       CarregaGridVendas(0);
+       limpaCampos;
+
+     end
+     else
+      ShowMessage(sErro);
+   end;
 end;
 
 procedure TFVenda.btnFinalizarClick(Sender: TObject);
@@ -106,7 +126,10 @@ end;
 
 procedure TFVenda.CarregaGridVendas(codigo: Integer);
 begin
-    CtrVendas.CarregaPedido(codigo);
+    if codigo = 0 then
+     CtrVendas.CarregaPedido(0,True,Date, Date)
+    else
+      CtrVendas.CarregaPedido(codigo,False,0,0 );
 
     cGrid.Clear;
     cGrid.RootNodeCount := CtrVendas.VendasList.Count;
@@ -124,6 +147,7 @@ begin
     03:
       CellText := FormatFloat(',0.00', CtrVendas.VendasList[Node.Index].car_valorTotal);
   end;
+
 end;
 
 procedure TFVenda.FinalizaVenda(sErro: String);
@@ -167,7 +191,7 @@ end;
 
 procedure TFVenda.Inserir(sErro: string);
 begin
-  CtrVendas.Vendas.car_codigo     := NewPed;
+  CtrVendas.Vendas.car_codigo     := CtrVendas.NewCod;
   CtrVendas.Vendas.car_codProduto := codigoPro;
   CtrVendas.Vendas.car_quantidade := StrToInt(txtQuantidade.Text);
   CtrVendas.Vendas.car_valorUnitario := StrToCurr(txtValorUnitario.Text);
@@ -184,11 +208,14 @@ begin
 end;
 
 procedure TFVenda.limpaCampos;
+var componett: TComponentClass;
+ i: Integer;
 begin
-  txtcodProduto.Clear;
-  txtQuantidade.Text := '';
-  txtValorUnitario.Clear;
-  txtValorTot.Clear;
+ for I := 0 to Self.ComponentCount -1 do
+  begin
+    if (Self.Components[i] is TEdit) and (not ((Self.Components[i] as TEdit).Name = 'txtQuantidade' )) then
+      (Self.Components[i] as TEdit).text :=  '';
+ end;
 end;
 
 procedure TFVenda.txtcodProdutoKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

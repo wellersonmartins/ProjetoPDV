@@ -1,0 +1,75 @@
+unit Urelatorio;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, frxClass, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  frxDBSet, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,uVendasController, ufuncoes,
+  Datasnap.DBClient, Vcl.ExtCtrls;
+
+type
+  TForm_rel = class(TForm)
+    frxRelVendas: TfrxReport;
+    frxDados: TfrxDBDataset;
+    cdDados: TClientDataSet;
+    cdDadosCodigo: TIntegerField;
+    cdDadosDescricao: TStringField;
+    cdDadosUnidade: TIntegerField;
+    cdDadosvlrunit: TStringField;
+    cdDadosvlrtot: TStringField;
+    dsDados: TDataSource;
+    Panel1: TPanel;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+   CtrVendas: TVendasController;
+
+  end;
+
+var
+  Form_rel: TForm_rel;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm_rel.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  // Self.Close;
+end;
+
+procedure TForm_rel.FormCreate(Sender: TObject);
+begin
+ //con:= iniciaConexao.Create;
+ CtrVendas := TVendasController.Create;
+ CtrVendas.CarregaPedido(0,True);
+
+end;
+
+procedure TForm_rel.FormShow(Sender: TObject);
+var i: integer;
+begin
+   cdDados.CreateDataSet;
+ cdDados.Open;
+ for I := 0 to CtrVendas.VendasList.Count -1 do
+ begin
+    cdDados.Append;
+    cdDadosCodigo.Value:= CtrVendas.VendasList[i].car_codProduto;
+    cdDadosDescricao.Value:= CtrVendas.VendasList[i].car_descriPro;
+    cdDadosUnidade.Value:= CtrVendas.VendasList[i].car_quantidade;
+    cdDadosvlrunit.Value:= FormatFloat('#,##0.00',CtrVendas.VendasList[i].car_valorUnitario);
+    cdDadosvlrtot.Value:= FormatFloat('#,##0.00',CtrVendas.VendasList[i].car_valorTotal);
+    cdDados.Post;
+ end;
+ frxRelVendas.ShowReport();
+ FreeAndNil(CtrVendas);
+ Self.Close;
+end;
+
+end.

@@ -1,0 +1,61 @@
+unit Urelatorio;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, frxClass, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  frxDBSet, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,uVendasController, ufuncoes,
+  Datasnap.DBClient, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask;
+
+type
+  TForm_rel = class(TForm)
+    frxRelVendas: TfrxReport;
+    frxDados: TfrxDBDataset;
+    cdDados: TClientDataSet;
+    cdDadosCodigo: TIntegerField;
+    cdDadosDescricao: TStringField;
+    cdDadosUnidade: TIntegerField;
+    cdDadosvlrunit: TStringField;
+    cdDadosvlrtot: TStringField;
+    dsDados: TDataSource;
+    Panel1: TPanel;
+    Button1: TButton;
+    GroupBox1: TGroupBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    edData1: TMaskEdit;
+    edData2: TMaskEdit;
+    Sair: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+   CtrVendas: TVendasController;
+
+  end;
+
+var
+  Form_rel: TForm_rel;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm_rel.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  // Self.Close;
+end;
+
+procedure TForm_rel.FormCreate(Sender: TObject);
+begin
+ //con:= iniciaConexao.Create;
+ CtrVendas := TVendasController.Create;
+ CtrVendas.CarregaPedido(0,True);
+
+end;
+
+end.

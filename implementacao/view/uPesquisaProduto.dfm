@@ -3,7 +3,7 @@ object FPesquisaProduto: TFPesquisaProduto
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Pesquisa Produto'
-  ClientHeight = 260
+  ClientHeight = 348
   ClientWidth = 503
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,14 +17,21 @@ object FPesquisaProduto: TFPesquisaProduto
   OnDestroy = FormDestroy
   DesignSize = (
     503
-    260)
-  PixelsPerInch = 98
+    348)
+  PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 8
+    Top = 10
+    Width = 97
+    Height = 13
+    Caption = 'C'#243'digo ou Descri'#231#227'o'
+  end
   object cGrid: TVirtualStringTree
     Left = 8
-    Top = 40
+    Top = 72
     Width = 485
-    Height = 212
+    Height = 268
     Alignment = taCenter
     Anchors = [akLeft, akTop, akRight, akBottom]
     Font.Charset = DEFAULT_CHARSET
@@ -62,9 +69,9 @@ object FPesquisaProduto: TFPesquisaProduto
       end>
   end
   object txtcodProduto: TEdit
-    Left = 9
-    Top = 13
-    Width = 297
+    Left = 8
+    Top = 29
+    Width = 273
     Height = 21
     CharCase = ecUpperCase
     Font.Charset = DEFAULT_CHARSET
@@ -78,7 +85,7 @@ object FPesquisaProduto: TFPesquisaProduto
   end
   object btnPesquisaProduto: TButton
     Left = 308
-    Top = 13
+    Top = 29
     Width = 64
     Height = 21
     Caption = 'Pesquisa'
@@ -86,8 +93,8 @@ object FPesquisaProduto: TFPesquisaProduto
     OnClick = btnPesquisaProdutoClick
   end
   object btnSelecionar: TButton
-    Left = 429
-    Top = 13
+    Left = 431
+    Top = 29
     Width = 64
     Height = 21
     Caption = 'Selecionar'
@@ -97,7 +104,7 @@ object FPesquisaProduto: TFPesquisaProduto
   object tmrConsulta: TTimer
     Interval = 100
     OnTimer = tmrConsultaTimer
-    Left = 104
-    Top = 56
+    Left = 96
+    Top = 128
   end
 end

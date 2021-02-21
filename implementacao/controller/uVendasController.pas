@@ -25,17 +25,19 @@ type
       function VerificaPedido: Boolean;
       function SomaTotalVendas:Currency;
       function Inserir(out sErro: String):Boolean;
+      function Remover(out sErro: String):Boolean;
       function FinalizaVendaCtr(out sErro: String):Boolean;
-      procedure CarregaPedido(Pedido: Integer);
+      procedure CarregaPedido(Pedido: Integer; Finalizado: Boolean; dt1,dt2: TDateTime);
+      function NewCod():Integer;
   end;
 
 implementation
 
 { TVendasController }
 
-procedure TVendasController.CarregaPedido(Pedido: Integer);
+procedure TVendasController.CarregaPedido(Pedido: Integer; Finalizado: Boolean; dt1,dt2: TDateTime);
 begin
-  FVendasDao.CarregaPedido(FVendasList, Pedido);
+  FVendasDao.CarregaPedido(FVendasList, Pedido, Finalizado, dt1,dt2);
 end;
 
 constructor TVendasController.Create;
@@ -61,6 +63,16 @@ end;
 function TVendasController.Inserir(out sErro: String): Boolean;
 begin
   Result:= DaoVendas.Inserir(FVendas, sErro);
+end;
+
+function TVendasController.NewCod: Integer;
+begin
+  Result := DaoVendas.NewPed;
+end;
+
+function TVendasController.Remover(out sErro: String): Boolean;
+begin
+  Result := DaoVendas.Remover(FVendas, sErro);
 end;
 
 procedure TVendasController.SetVendas(const Value: TvendasModel);

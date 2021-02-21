@@ -73,15 +73,16 @@ begin
      Con.Query.SQL.Add('select * from cadastroProduto ');
 
      if StrToIntDef(Pesquisa, 0) = 0 then
-     begin
-       COn.Query.SQL.Add('where lower(pro_descricao) like lower(:pro_descricao)') ;
-       COn.Query.ParamByName('pro_descricao').AsString := Pesquisa + '%';
-     end
+       begin
+          COn.Query.SQL.Add('where lower(pro_descricao) like lower(:pro_descricao)') ;
+          COn.Query.ParamByName('pro_descricao').AsString := Pesquisa + '%';
+       end
      else
      begin
        COn.Query.SQL.Add('where pro_codigo = :pro_codigo') ;
        COn.Query.ParamByName('pro_codigo').AsInteger := StrToInt(Pesquisa);
      end;
+
      Con.Query.SQL.SaveToFile('C:\Temp\teste.txt');
      Con.Query.Open;
 
